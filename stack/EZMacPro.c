@@ -81,7 +81,7 @@ volatile SEGMENT_VARIABLE(EZMacProCurrentChannel, U8, EZMAC_PRO_GLOBAL_MSPACE);
 //------------------------------------------------------------------------------------------------
 // Function Name:	EZMacPRO_Init()
 //						Initializes the EZRadioPRO device. The function has to be called in the power-on routine.
-// Return Values : MAC_OK: if the MAC recognized the used chip
+// Return Values :	MAC_OK: if the MAC recognized the used chip
 //						CHIPTYPE_ERROR: if the MAC didn't recognize the used chip
 //------------------------------------------------------------------------------------------------
 MacParams EZMacPRO_Init(void)
