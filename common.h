@@ -15,7 +15,7 @@
 /*!
  * Module with STM32.
  */
-#ifdef STM32F10X_MD
+#if defined ( STM32F10X_MD ) || defined ( STM32L1XX_MD )
 
 	#define BSP_USER
 	#define STM32_MODULE

@@ -1,5 +1,6 @@
 #include "bsp.h"
 
+#ifdef STM32F10X_MD
 void pinMode ( uint8_t pin, uint8_t mode )
 {
 	GPIO_TypeDef * port = PIN_PORT(pin);
@@ -16,16 +17,20 @@ void pinMode ( uint8_t pin, uint8_t mode )
 	else if (mode == GPIO_Mode_IPU)
 		port->BSRR = (((uint32_t)0x01) << (pin & 0x0F));
 }
-
-void pinLow  ( uint8_t pin )
+#else
+#ifdef STM32L1XX_MD
+void pinMode ( uint8_t pin, uint8_t mode )
 {
-	GPIO_ResetBits(PIN_PORT(pin), PIN_MASK(pin));
+	GPIO_InitTypeDef        GPIO_InitStructure;
+	GPIO_InitStructure.GPIO_Pin = PIN_MASK(pin);
+	GPIO_InitStructure.GPIO_Mode = (GPIOMode_TypeDef)(mode & 0x03);
+	GPIO_InitStructure.GPIO_OType = (GPIOOType_TypeDef)((mode >> 2) & 0x03);
+	GPIO_InitStructure.GPIO_Speed = (GPIOSpeed_TypeDef)((mode >> 4) & 0x03);
+	GPIO_InitStructure.GPIO_PuPd = (GPIOPuPd_TypeDef)((mode >> 6) & 0x03);
+	GPIO_Init(GPIOD, &GPIO_InitStructure);
 }
-void pinHigh ( uint8_t pin )
-{
-	GPIO_SetBits(PIN_PORT(pin), PIN_MASK(pin));
-}
-
+#endif
+#endif
 
 /*!
  * Init board.
@@ -35,12 +40,22 @@ void BoardInit(void)
 	SPI_InitTypeDef   SPI_InitStructure;
 	EXTI_InitTypeDef   EXTI_InitStructure;
 	NVIC_InitTypeDef   NVIC_InitStructure;
+#ifdef STM32F10X_MD
 	RCC_APB2PeriphClockCmd( 0
 		| RCC_APB2Periph_GPIOA
 		| RCC_APB2Periph_GPIOB
 		| RCC_APB2Periph_AFIO
 		, ENABLE);
-
+#else
+#ifdef STM32L1XX_MD
+	RCC_AHBPeriphClockCmd( 0
+		| RCC_AHBPeriph_GPIOA
+		| RCC_AHBPeriph_GPIOB
+		, ENABLE);
+#else
+	#error "Unknown CPU type"
+#endif
+#endif
 	DBGMCU_Config( 0
 		| DBGMCU_TIM2_STOP
 		| DBGMCU_TIM3_STOP
@@ -85,8 +100,14 @@ void BoardInit(void)
 	SPI_InitStructure.SPI_CRCPolynomial = 7;
 	SPI_Init(RF_SPI, &SPI_InitStructure);
 	SPI_Cmd(RF_SPI, ENABLE);
-
+	
+#ifdef STM32F10X_MD
 	GPIO_EXTILineConfig(RF_IRQ_EXT_PORT, RF_IRQ_EXT_PIN);
+#else
+#ifdef STM32L1XX_MD
+	SYSCFG_EXTILineConfig(RF_IRQ_EXT_PORT, RF_IRQ_EXT_PIN);
+#endif
+#endif
 
 	EXTI_InitStructure.EXTI_Line = RF_IRQ_EXT_LINE;
 	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;

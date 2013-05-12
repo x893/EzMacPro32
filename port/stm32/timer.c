@@ -16,7 +16,9 @@ void TimerInit(TIM_TypeDef* TIMx, uint16_t prescaler, uint8_t irq)
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 	TIM_TimeBaseStructure.TIM_Period = 0xFFFF;
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+#ifdef STM32F10X_MD
 	TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;
+#endif
 	TIM_TimeBaseInit(TIMx, &TIM_TimeBaseStructure);
 	TIM_ClearFlag(TIMx, TIM_FLAG_Update);
 

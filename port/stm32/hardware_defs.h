@@ -1,12 +1,22 @@
 #ifndef _HARDWARE_DEFS_H_
 #define _HARDWARE_DEFS_H_
 
-#include "stm32f10x.h"
+#ifdef STM32F10X_MD
+	#include "stm32f10x.h"
+#else
+#ifdef STM32L1XX_MD
+	#include "stm32l1xx.h"
+#else
+	#error "Unknown CPU type"
+#endif
+#endif
+
 #include "bsp_gpio.h"
 
 /*!
  * System Clock and frequency divider definition.
  */
+
 #define SYSCLK_HZ				(72000000L)
 #define MAC_TIMER_PRESCALER		72L
 #define DELAY_TIMER_PRESCALER	72L
@@ -35,7 +45,7 @@
 #define RF_IRQ_EXT_PORT		((uint8_t)((RF_IRQ_PIN & 0xF0) >> 4))
 #define RF_IRQ_EXT_PIN		PIN_NUMBER(RF_IRQ_PIN)
 #define RF_IRQ_EXT_LINE		PIN_MASK(RF_IRQ_PIN)
-	
+
 #define RF_SCLK_INIT()		pinMode ( RF_SCLK_PIN, MODE_AltPushPull_50M )
 #define RF_MOSI_INIT()		pinMode ( RF_MOSI_PIN, MODE_AltPushPull_50M )
 #define RF_MISO_INIT()		pinMode ( RF_MISO_PIN, MODE_Input )
@@ -44,15 +54,21 @@
 #define RF_SDN_HIGH()		pinHigh ( RF_SDN_PIN )
 #define RF_SDN_INIT()		pinMode ( RF_SDN_PIN, MODE_PushPull_2M)
 
-#define RF_NSS_LOW()		PIN_PORT(RF_NSS_PIN)->BRR  = PIN_MASK(RF_NSS_PIN)
-#define RF_NSS_HIGH()		PIN_PORT(RF_NSS_PIN)->BSRR = PIN_MASK(RF_NSS_PIN)
+#define RF_NSS_LOW()		pinLow(RF_NSS_PIN)
+#define RF_NSS_HIGH()		pinHigh(RF_NSS_PIN)
 #define RF_NSS_INIT()		pinMode ( RF_NSS_PIN, MODE_PushPull_50M )
 
 #define RF_IRQ_READ()		(PIN_PORT(RF_IRQ_PIN)->IDR & PIN_MASK(RF_IRQ_PIN))
 #define RF_IRQ_INIT()		pinMode ( RF_IRQ_PIN, MODE_Input )
 
 #define RF_SPI				SPI1
-#define RF_SPI_CLOCK()		RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE)
+#ifdef STM32F10X_MD
+	#define RF_SPI_CLOCK()		RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE)
+#else
+#ifdef STM32L1XX_MD
+	#define RF_SPI_CLOCK()		RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE)
+#endif
+#endif
 
 #define LED1_OFF()			pinLow  ( LED1_PIN )
 #define LED2_OFF()			pinLow  ( LED2_PIN )
@@ -79,6 +95,7 @@
 		EXTI->IMR &= ~RF_IRQ_EXT_LINE;	\
 		CLEAR_MAC_EXT_INTERRUPT();		\
 	} while (0)
+
 #define DISABLE_MAC_EXT_INTERRUPT()		\
 	do {								\
 		DISABLE_GLOBAL_INTERRUPTS();	\
@@ -113,19 +130,32 @@
 #define UART_RX_PIN				PA10
 #define UART_TX_PIN				PA9
 #define USART_CLK				RCC_APB2Periph_USART1
-#define USART_GPIO_CLK			RCC_APB2Periph_GPIOA
 #define USART_IRQn				USART1_IRQn
 #define USART_IRQHandler		USART1_IRQHandler
 #define USART_TX_INIT()			pinMode(UART_TX_PIN, MODE_AltPushPull_50M)
 #define USART_RX_INIT()			pinMode(UART_RX_PIN, MODE_Input_PU)
-#define USART_CLOCK()			\
-	do {											\
-		RCC_APB2PeriphClockCmd( 0					\
-			| USART_GPIO_CLK						\
-			| RCC_APB2Periph_AFIO					\
-			, ENABLE);								\
-		RCC_APB2PeriphClockCmd(USART_CLK, ENABLE);	\
-	} while (0)
+#ifdef STM32F10X_MD
+	#define USART_GPIO_CLK			RCC_APB2Periph_GPIOA
+	#define USART_CLOCK()			\
+		do {											\
+			RCC_APB2PeriphClockCmd( 0					\
+				| USART_GPIO_CLK						\
+				| RCC_APB2Periph_AFIO					\
+				, ENABLE);								\
+			RCC_APB2PeriphClockCmd(USART_CLK, ENABLE);	\
+		} while (0)
+#else
+#ifdef STM32L1XX_MD
+	#define USART_GPIO_CLK			RCC_AHBPeriph_GPIOA
+	#define USART_CLOCK()			\
+		do {											\
+			RCC_AHBPeriphClockCmd( 0					\
+				| USART_GPIO_CLK						\
+				, ENABLE);								\
+			RCC_APB2PeriphClockCmd(USART_CLK, ENABLE);	\
+		} while (0)
+#endif
+#endif
 
 
 #define ENABLE_UART0_INTERRUPT()

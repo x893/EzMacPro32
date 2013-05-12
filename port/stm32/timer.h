@@ -51,8 +51,6 @@
 #define DELAY_15MS_TIMER2               (U16)((SYSCLK_HZ / DELAY_TIMER_PRESCALER) /   67)
 
 extern SEGMENT_VARIABLE(EZMacProTimerMSB, U16, EZMAC_PRO_GLOBAL_MSPACE);
-extern SEGMENT_VARIABLE(Timer0MSB, U16, EZMAC_PRO_GLOBAL_MSPACE);
-extern SEGMENT_VARIABLE(Timer0MSB_save, U16, EZMAC_PRO_GLOBAL_MSPACE);
 
 void TimerInit(TIM_TypeDef* TIMx, uint16_t prescaler, uint8_t irq);
 void TimersInit(void);
