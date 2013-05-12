@@ -12,10 +12,10 @@
 	#include "timer.c"
 #endif //TIMER_ENABLED
 #ifdef RTC_ENABLED
-  #include "rtc.c"
+	#include "rtc.c"
 #endif //RTC_ENABLED
 #ifdef UART0_ENABLED
-  #include "uart.c"
+	#include "uart.c"
 #endif //UART0_ENABLED
 
 /*!
@@ -25,21 +25,20 @@
 #ifndef B1_ONLY
   #include "si4431_const_a0.c"
   #include "si4432_const_v2.c"
-#endif //B1_ONLY
-  #include "si443x_const_b1.c"
-
+#endif
+#include "si443x_const_b1.c"
 
 /*!
  * Development Platform selector.
  */
 #ifdef SOFTWARE_DEVELOPMENT_BOARD
-  #include "sdbc.c"
+	#include "sdbc.c"
 #endif //SOFTWARE_DEVELOPMENT_BOARD
 #ifdef EZLINK_MODULE
-  #include "ezlink.c"
+	#include "ezlink.c"
 #endif //EZLINK_MODULE
 #ifdef SI1000_DAUGHTERCARD_SI1000_MOTHERBOARD
-  #include "si1000mb.c"
+	#include "si1000mb.c"
 #endif //SI1000_DAUGHTERCARD_SI1000_MOTHERBOARD
 #ifdef SI1010_DAUGHTERCARD_SI1000_MOTHERBOARD
 	#include "si1010mb.c"

@@ -133,7 +133,7 @@ void extIntWakeUp(U8 intStatus2)
 		extIntSpiWriteReg(SI4432_INTERRUPT_ENABLE_1, 0);
 		extIntSetEnable2 (SI4432_ENCHIPRDY);	// enable chip ready interrupt
 
-		extIntTimeout (TIMEOUT_XTAL_START);		// set time out 1 ms
+		extIntTimeout (TIMEOUT_XTAL_START);		// set time out
 		ENABLE_MAC_TIMER_INTERRUPT();
 		extIntSetFunction1(SI4432_XTON);		// enable the XTAL
 	}

@@ -130,7 +130,7 @@
           <Target>
             <UseTarget>1</UseTarget>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
-            <RunToMain>0</RunToMain>
+            <RunToMain>1</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
             <RestoreWatchpoints>1</RestoreWatchpoints>
             <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
@@ -888,29 +888,9 @@
               <FilePath>..\..\..\port\stm32\startup_stm32f10x_md.s</FilePath>
             </File>
             <File>
-              <FileName>hardware_defs.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\port\stm32\hardware_defs.h</FilePath>
-            </File>
-            <File>
-              <FileName>spi.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\port\stm32\spi.h</FilePath>
-            </File>
-            <File>
               <FileName>stm32f10x_conf.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\port\stm32\stm32f10x_conf.h</FilePath>
-            </File>
-            <File>
-              <FileName>timer.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\port\stm32\timer.h</FilePath>
-            </File>
-            <File>
-              <FileName>uart.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\port\stm32\uart.h</FilePath>
             </File>
             <File>
               <FileName>stm32f10x_dbgmcu.c</FileName>
@@ -1878,29 +1858,9 @@
               <FilePath>..\..\..\port\stm32\startup_stm32f10x_md.s</FilePath>
             </File>
             <File>
-              <FileName>hardware_defs.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\port\stm32\hardware_defs.h</FilePath>
-            </File>
-            <File>
-              <FileName>spi.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\port\stm32\spi.h</FilePath>
-            </File>
-            <File>
               <FileName>stm32f10x_conf.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\port\stm32\stm32f10x_conf.h</FilePath>
-            </File>
-            <File>
-              <FileName>timer.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\port\stm32\timer.h</FilePath>
-            </File>
-            <File>
-              <FileName>uart.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\port\stm32\uart.h</FilePath>
             </File>
             <File>
               <FileName>stm32f10x_dbgmcu.c</FileName>
@@ -2748,29 +2708,9 @@
               <FilePath>..\..\..\port\stm32\startup_stm32f10x_md.s</FilePath>
             </File>
             <File>
-              <FileName>hardware_defs.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\port\stm32\hardware_defs.h</FilePath>
-            </File>
-            <File>
-              <FileName>spi.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\port\stm32\spi.h</FilePath>
-            </File>
-            <File>
               <FileName>stm32f10x_conf.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\port\stm32\stm32f10x_conf.h</FilePath>
-            </File>
-            <File>
-              <FileName>timer.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\port\stm32\timer.h</FilePath>
-            </File>
-            <File>
-              <FileName>uart.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\port\stm32\uart.h</FilePath>
             </File>
             <File>
               <FileName>stm32f10x_dbgmcu.c</FileName>
@@ -3658,29 +3598,9 @@
               <FilePath>..\..\..\port\stm32\startup_stm32f10x_md.s</FilePath>
             </File>
             <File>
-              <FileName>hardware_defs.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\port\stm32\hardware_defs.h</FilePath>
-            </File>
-            <File>
-              <FileName>spi.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\port\stm32\spi.h</FilePath>
-            </File>
-            <File>
               <FileName>stm32f10x_conf.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\port\stm32\stm32f10x_conf.h</FilePath>
-            </File>
-            <File>
-              <FileName>timer.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\port\stm32\timer.h</FilePath>
-            </File>
-            <File>
-              <FileName>uart.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\port\stm32\uart.h</FilePath>
             </File>
             <File>
               <FileName>stm32f10x_dbgmcu.c</FileName>

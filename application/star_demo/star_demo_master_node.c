@@ -40,13 +40,13 @@
  * ======================================= */
 
 SEGMENT_VARIABLE(SlaveInfoTable[MAX_NMBR_OF_SLAVES], SlaveInfoTable_t, APPLICATION_MSPACE);
-SEGMENT_VARIABLE(rfPayload,		Frame_uu,	APPLICATION_MSPACE);
-SEGMENT_VARIABLE(packetLength,	U8,			APPLICATION_MSPACE);
-SEGMENT_VARIABLE(rndCounter,	U16,		APPLICATION_MSPACE);
-SEGMENT_VARIABLE(slaveAddr,		Addr_t,		APPLICATION_MSPACE);
-SEGMENT_VARIABLE(rndAddr,		Addr_t,		APPLICATION_MSPACE);
-SEGMENT_VARIABLE(nodeCnt,		U8,			APPLICATION_MSPACE);
-SEGMENT_VARIABLE(DEMO_SR,		U8,			APPLICATION_MSPACE);
+SEGMENT_VARIABLE(rfPayload,			Frame_uu,	APPLICATION_MSPACE);
+SEGMENT_VARIABLE(packetLength,		U8,			APPLICATION_MSPACE);
+SEGMENT_VARIABLE(rndCounter,		U16,		APPLICATION_MSPACE);
+SEGMENT_VARIABLE(slaveAddr,			Addr_t,		APPLICATION_MSPACE);
+SEGMENT_VARIABLE(rndAddr,			Addr_t,		APPLICATION_MSPACE);
+SEGMENT_VARIABLE(nodeCnt,			U8,			APPLICATION_MSPACE);
+volatile SEGMENT_VARIABLE(DEMO_SR,	U8,			APPLICATION_MSPACE);
 
 #ifdef TRACE_ENABLED
 	SEGMENT_VARIABLE(printBuf[40], U8, APPLICATION_MSPACE);
@@ -99,10 +99,11 @@ void MasterNodeBoot(void)
 	switch (DEMO_SR)
 	{
 		case DEMO_BOOT_INIT:
-
 			ENABLE_GLOBAL_INTERRUPTS();					// Enable global interrupts.
 			EZMacPRO_Init();							// Initialise EZMacPRO.
-
+#ifdef WIFI_ROUTE
+			WiFi_Init();
+#endif
 			WAIT_FLAG_TRUE(fEZMacPRO_StateSleepEntered);// Wait until device goes to Sleep.
 			fEZMacPRO_StateWakeUpEntered = 0;			// Clear State transition flags.
 
@@ -116,14 +117,12 @@ void MasterNodeBoot(void)
 			WAIT_FLAG_TRUE(fEZMacPRO_LFTimerExpired);	// Wait here until LFT expires.
 														// Disable LFT.
 			EZMacPRO_Reg_Write(LFTMR2, ~0x80 & LFTMR2_TIMEOUT_SEC(STARTUP_TIMEOUT));
-			fEZMacPRO_LFTimerExpired = 0;
-
 														// Star demo Master node initialisation.
 			EZMacPRO_Reg_Write(MCR, 0xAC);				// CIDE=1, DR=9.6kbps, RAD=1, DNPL=1, NFR=0
 			EZMacPRO_Reg_Write(SECR, 0x60);				// State after receive is RX state and state after transmit is Idle state
 			EZMacPRO_Reg_Write(RCR, 0x00);				// Search disable
 			EZMacPRO_Reg_Write(FR0, 0);					// Set the used frequency channel
-			EZMacPRO_Reg_Write(TCR, (0x70|LBT_SWITCH)); // LBT enabled/disabled, Output power: +20 dBm, ACK disable, AFC disable
+			EZMacPRO_Reg_Write(TCR, (0x70 | LBT_SWITCH)); // LBT enabled/disabled, Output power: +20 dBm, ACK disable, AFC disable
 			EZMacPRO_Reg_Write(LBTLR, 0x78);			// RSSI threshold -60 dB
 			EZMacPRO_Reg_Write(LBTIR, 0x8A);			// Time interval
 			EZMacPRO_Reg_Write(LBDR, 0x80);				// Enable Low Battery Detect
@@ -135,7 +134,7 @@ void MasterNodeBoot(void)
 			{	// Init slave info table.
 				SlaveInfoTable[nodeCnt].associated = NOT_ASSOCIATED;
 				SlaveInfoTable[nodeCnt].address.cid = DEMO_MASTER_CID;
-				SlaveInfoTable[nodeCnt].address.sfid = nodeCnt+1;
+				SlaveInfoTable[nodeCnt].address.sfid = nodeCnt + 1;
 				SlaveInfoTable[nodeCnt].timeout = TIMEOUT_INITIAL_VALUE;
 				SlaveInfoTable[nodeCnt].temperature = TEMP_INVALID_VALUE;
 				SlaveInfoTable[nodeCnt].voltage = VOLTAGE_INVALID_VALUE;
@@ -193,46 +192,40 @@ void MasterNodeAssociate(void)
 			PERFORM_MENU(sMenu_Associate_State);
 			TRACE("[DEMO_ASSOC] Search for slaves to associate with.\n");
 
-			/* Configure Beacon Frame. */
+			// Configure Beacon Frame.
 			EZMacPRO_Reg_Write(TCR, (0x70 | LBT_SWITCH));	// LBT enabled/disabled, Output power: +20 dBm, ACK disable, AFC disable
 			EZMacPRO_Reg_Write(DID, DEMO_MASTER_MCAST);		// Set Destination ID
 			
-			rfPayload.frameUnion.beacon.type = FRAME_BEACON;	// Assemble beacon frame
+			rfPayload.frameUnion.beacon.type = FRAME_BEACON;// Assemble beacon frame
 			// Write the packet length and payload to the TX buffer
 			EZMacPRO_TxBuf_Write(sizeof(FrameBeacon_t), &rfPayload.frameRaw[0]);
-			EZMacPRO_Transmit();								// Send the packet
+			EZMacPRO_Transmit();							// Send the packet
 
-			WAIT_FLAG_TRUE(fEZMacPRO_StateIdleEntered);	// Wait until device goes to Idle.
+			WAIT_FLAG_TRUE(fEZMacPRO_StateIdleEntered);		// Wait until device goes to Idle.
 
-			DEMO_SR = DEMO_ASSOC_REQ_RX;	// Go to next state.
+			DEMO_SR = DEMO_ASSOC_REQ_RX;					// Go to next state.
 			break;
 
 		case DEMO_ASSOC_REQ_RX:
-			 /* Go to receive state. */
-			 EZMacPRO_Receive();
-			 /* Wait until radio is placed to RX. */
-			 while (!fEZMacPRO_StateRxEntered);
-			 /* Clear State transition flag. */
-			 fEZMacPRO_StateRxEntered = 0;
-			 /* Go to next state. */
-			 DEMO_SR = DEMO_ASSOC_REQ_RXD;
+			EZMacPRO_Receive();								// Go to receive state.
+			WAIT_FLAG_TRUE(fEZMacPRO_StateRxEntered);		// Wait until radio is placed to RX.
+			DEMO_SR = DEMO_ASSOC_REQ_RXD;					// Go to next state.
 			break;
 
 		case DEMO_ASSOC_REQ_RXD:
 			 if (fEZMacPRO_PacketReceived)
-			 {	/* Clear flag. */
+			 {
 				 fEZMacPRO_PacketReceived = 0;
-				 /* Free slot in association table. Check message type. */
+				 // Free slot in association table. Check message type.
 				 if ((nodeCnt = SearchFreeSlotInAssocTable()) != ASSOC_TABLE_FULL)
-				 {	/* Read out the payload. */
+				 {	// Read out the payload.
 					 EZMacPRO_RxBuf_Read(&packetLength, &rfPayload.frameRaw[0]);
-					 /* Message is association request. */
+					 // Message is association request.
 					 if (rfPayload.frameUnion.assocReq.type == FRAME_ASSOC_REQ)
-					 {	/* Save address of the slave. */
-						 EZMacPRO_Reg_Read(RCID, &slaveAddr.cid);
+					 {
+						 EZMacPRO_Reg_Read(RCID, &slaveAddr.cid);		// Save address of the slave.
 						 EZMacPRO_Reg_Read(RSID, &slaveAddr.sfid);
-						 /* Go to next state. */
-						 DEMO_SR = DEMO_ASSOC_RESP_TX;
+						 DEMO_SR = DEMO_ASSOC_RESP_TX;					// Go to next state.
 					 }
 				 }
 			 }
@@ -251,7 +244,6 @@ void MasterNodeAssociate(void)
 			EZMacPRO_TxBuf_Write(sizeof(FrameAssocResp_t), &rfPayload.frameRaw[0]);
 			EZMacPRO_Transmit();						// Send the packet.
 			WAIT_FLAG_TRUE(fEZMacPRO_StateIdleEntered);	// Wait until device goes to Idle.
-
 			DEMO_SR = DEMO_ASSOC_RESP_ACK_RX;			// Go to next state.
 			break;
 
@@ -263,20 +255,22 @@ void MasterNodeAssociate(void)
 
 		case DEMO_ASSOC_RESP_ACK_RXD:
 			if (fEZMacPRO_PacketReceived)
-			{	// Clear flag.
+			{
 				fEZMacPRO_PacketReceived = 0;
 				EZMacPRO_RxBuf_Read(&packetLength, &rfPayload.frameRaw[0]);	// Read out the payload of the acknowledgement.
-
 				// Message is the acknowledgement of association response.
 				if (rfPayload.frameUnion.assocRespAck.type == FRAME_ASSOC_RESP_ACK)
 				{	// From the right node.
 					if (memcmp(&rfPayload.frameUnion.assocRespAck.rndAddr, &slaveAddr, sizeof(Addr_t)) == 0)
-					{	// Set flag.
-						SlaveInfoTable[nodeCnt].associated = ASSOCIATED;
+					{
+						SlaveInfoTable[nodeCnt].associated = ASSOCIATED;	// Set flag.
+#ifdef __CC_ARM
+						TRACE("[DEMO_ASSOC] Slave associated with address: %02u.\n", SlaveInfoTable[nodeCnt].address.sfid);
+#else
 						TRACE("[DEMO_ASSOC] Slave associated with address: %02bu.\n", SlaveInfoTable[nodeCnt].address.sfid);
+#endif
 					}
 				}
-
 				EZMacPRO_Idle();							// Go to Idle state.
 				WAIT_FLAG_TRUE(fEZMacPRO_StateIdleEntered);	// Wait until device goes to Idle.
 				DEMO_SR = DEMO_ASSOC_REQ_RX;				// Go to next state.
@@ -347,8 +341,11 @@ void MasterNodeStatusUpdate(void)
 				rfPayload.frameUnion.statusUpdateReq.type = FRAME_SU_REQ;
 														// Write the packet length and payload to the TX buffer.
 				EZMacPRO_TxBuf_Write(sizeof(FrameStatusUpdateReq_t), &rfPayload.frameRaw[0]);
+#ifdef __CC_ARM
+				TRACE("[DEMO_SU] Slave[%02u]: associated. Query slave.\n", SlaveInfoTable[nodeCnt].address.sfid);
+#else
 				TRACE("[DEMO_SU] Slave[%02bu]: associated. Query slave.\n", SlaveInfoTable[nodeCnt].address.sfid);
-
+#endif
 				EZMacPRO_Transmit();					// Send the packet.
 				WAIT_FLAG_TRUE(fEZMacPRO_StateIdleEntered);	// Wait until device goes to Idle.
 				DEMO_SR = DEMO_SU_RESP_RX;				// Go to wait for status update response.
@@ -358,12 +355,17 @@ void MasterNodeStatusUpdate(void)
 				EZMacPRO_Sleep();						// Go to Sleep state.
 				while (!fEZMacPRO_StateSleepEntered);	// Wait until device goes to Sleep.
 				LED1_OFF();								// LED1 indicates the radio is OFF.
+#ifdef __CC_ARM
+				TRACE("[DEMO_SU] Slave[%02u]: not associated. Skip slave.\n", SlaveInfoTable[nodeCnt].address.sfid);
+#else
 				TRACE("[DEMO_SU] Slave[%02bu]: not associated. Skip slave.\n", SlaveInfoTable[nodeCnt].address.sfid);
+#endif
 				DEMO_SR = DEMO_SU_SLEEP;				// Go to Status Update Sleep state.
 			}
 			break;
 
 		case DEMO_SU_RESP_RX:
+			TRACE("[DEMO_SU] DEMO_SU_RESP_RX\n");
 			EZMacPRO_Receive();							// Go to receive state.
 			WAIT_FLAG_TRUE(fEZMacPRO_StateRxEntered);	// Wait until radio is placed to RX.
 			DEMO_SR = DEMO_SU_RESP_RXD;					// Go to next state.
@@ -372,6 +374,7 @@ void MasterNodeStatusUpdate(void)
 		case DEMO_SU_RESP_RXD:
 			if (fEZMacPRO_PacketReceived)
 			{
+				TRACE("[DEMO_SU] Packet Received\n");
 				fEZMacPRO_PacketReceived = 0;
 				// Read out the payload of the packet.
 				EZMacPRO_RxBuf_Read(&packetLength, &rfPayload.frameRaw[0]);
@@ -438,7 +441,11 @@ void MasterNodeSleep(void)
 			LED1_OFF();										// LED1 indicates the radio is OFF.
 															// Update parameters of Slaves on LCD.
 			PERFORM_MENU(sMenu_RefreshScreen);				// Display Status Update state on UART.
-			TRACE("[DEMO_SLEEP] Slave Info Table:\n", SlaveInfoTable[nodeCnt].address.sfid);
+#ifdef __CC_ARM
+			TRACE("[DEMO_SLEEP] Slave Info Table: %02u\n", SlaveInfoTable[nodeCnt].address.sfid);
+#else
+			TRACE("[DEMO_SLEEP] Slave Info Table: %02bu\n", SlaveInfoTable[nodeCnt].address.sfid);
+#endif
 			TRACE_SLAVE_INFO();
 			PERFORM_MENU(sMenu_SleepState);					// Display Status Update state on LCD.
 			TRACE("[DEMO_SLEEP] Master went to sleep.\n\n\n");
@@ -480,13 +487,17 @@ void PrintSlaveInfo(void)
 		{	/* Print slave status. */
 			SprintfSlaveInfo(&SlaveInfoTable[bCnt], printBuf);
 			/* Print Rssi. */
+#ifdef __CC_ARM
+			sprintf((char *)&printBuf[21], "	[rssi:%03u]", SlaveInfoTable[bCnt].rssi);
+#else
 			sprintf(&printBuf[21], "	[rssi:%03bu]", SlaveInfoTable[bCnt].rssi);
+#endif
 		}
 		else
 		{	/* Update slave status - not associated. */
 			SprintfSlaveNotAssoc(printBuf);
 		}
-		printf("	%s\n", printBuf);
+		TRACE("	%s\n", printBuf);
 	}
 }
 #endif //TRACE_ENABLED

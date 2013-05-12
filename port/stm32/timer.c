@@ -118,9 +118,7 @@ void macTimeout (U32 longTime)
 {
 	U8 restoreInts = GET_MAC_EXT_INTERRUPT();
 	DISABLE_MAC_INTERRUPTS();
-
 	extIntTimeout(longTime);
-	
 	SET_MAC_EXT_INTERRUPT(restoreInts);
 }
 //================================================================================================

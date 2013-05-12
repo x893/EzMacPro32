@@ -21,57 +21,57 @@
  *	 G L O B A L	V A R I A B L E S	 *
  * ======================================= */
 
-SEGMENT_VARIABLE(EZMacProReg, EZMacProUnion, REGISTER_MSPACE);
-SEGMENT_VARIABLE(EZMacProCurrentChannel, U8, EZMAC_PRO_GLOBAL_MSPACE);
+volatile SEGMENT_VARIABLE(EZMacProReg, EZMacProUnion, REGISTER_MSPACE);
+volatile SEGMENT_VARIABLE(EZMacProCurrentChannel, U8, EZMAC_PRO_GLOBAL_MSPACE);
 
 #ifdef EXTENDED_PACKET_FORMAT
-	SEGMENT_VARIABLE(TimeoutACK, U32, EZMAC_PRO_GLOBAL_MSPACE);
-	SEGMENT_VARIABLE(EZMacProSequenceNumber, U8, EZMAC_PRO_GLOBAL_MSPACE);
-	SEGMENT_VARIABLE(PreamRegValue, U8, EZMAC_PRO_GLOBAL_MSPACE);
-#endif//EXTENDED_PACKET_FORMAT
+	volatile SEGMENT_VARIABLE(TimeoutACK, U32, EZMAC_PRO_GLOBAL_MSPACE);
+	volatile SEGMENT_VARIABLE(EZMacProSequenceNumber, U8, EZMAC_PRO_GLOBAL_MSPACE);
+	volatile SEGMENT_VARIABLE(PreamRegValue, U8, EZMAC_PRO_GLOBAL_MSPACE);
+#endif
 
 #ifndef TRANSMITTER_ONLY_OPERATION
-	BIT fHeaderErrorOccurred;
+	volatile BIT fHeaderErrorOccurred;
 	SEGMENT_VARIABLE(RxBuffer[RECEIVED_BUFFER_SIZE], U8 , BUFFER_MSPACE);
 	#ifdef EXTENDED_PACKET_FORMAT
-		SEGMENT_VARIABLE(AckBufSize, U8 , EZMAC_PRO_GLOBAL_MSPACE);
-		SEGMENT_VARIABLE(AckBuffer[ACK_BUFFER_SIZE], U8 , BUFFER_MSPACE);
+		volatile SEGMENT_VARIABLE(AckBufSize, U8 , EZMAC_PRO_GLOBAL_MSPACE);
+		volatile SEGMENT_VARIABLE(AckBuffer[ACK_BUFFER_SIZE], U8 , BUFFER_MSPACE);
 	#endif
-	SEGMENT_VARIABLE(EZMacProReceiveStatus, U8, EZMAC_PRO_GLOBAL_MSPACE);
-	SEGMENT_VARIABLE(EZMacProRSSIvalue, U8, EZMAC_PRO_GLOBAL_MSPACE);
-	SEGMENT_VARIABLE(TimeoutSyncWord, U32, EZMAC_PRO_GLOBAL_MSPACE);
-	SEGMENT_VARIABLE(TimeoutRX_Packet, U32, EZMAC_PRO_GLOBAL_MSPACE);
+	volatile SEGMENT_VARIABLE(EZMacProReceiveStatus, U8, EZMAC_PRO_GLOBAL_MSPACE);
+	volatile SEGMENT_VARIABLE(EZMacProRSSIvalue, U8, EZMAC_PRO_GLOBAL_MSPACE);
+	volatile SEGMENT_VARIABLE(TimeoutSyncWord, U32, EZMAC_PRO_GLOBAL_MSPACE);
+	volatile SEGMENT_VARIABLE(TimeoutRX_Packet, U32, EZMAC_PRO_GLOBAL_MSPACE);
 	#ifndef B1_ONLY
-		SEGMENT_VARIABLE(RX_Freq_dev, U8, EZMAC_PRO_GLOBAL_MSPACE);
+		volatile SEGMENT_VARIABLE(RX_Freq_dev, U8, EZMAC_PRO_GLOBAL_MSPACE);
 	#endif
-	SEGMENT_VARIABLE(TimeoutChannelSearch, U32, EZMAC_PRO_GLOBAL_MSPACE);
+	volatile SEGMENT_VARIABLE(TimeoutChannelSearch, U32, EZMAC_PRO_GLOBAL_MSPACE);
 #endif
 
 #ifndef RECEIVER_ONLY_OPERATION
-	SEGMENT_VARIABLE(TimeoutTX_Packet, U32, EZMAC_PRO_GLOBAL_MSPACE);
+	volatile SEGMENT_VARIABLE(TimeoutTX_Packet, U32, EZMAC_PRO_GLOBAL_MSPACE);
 	#ifndef B1_ONLY
-		SEGMENT_VARIABLE(TX_Freq_dev, U8, EZMAC_PRO_GLOBAL_MSPACE);
+		volatile SEGMENT_VARIABLE(TX_Freq_dev, U8, EZMAC_PRO_GLOBAL_MSPACE);
 	#endif
 #endif
 
 #ifdef TRANSCEIVER_OPERATION
-	SEGMENT_VARIABLE(TimeoutLBTI, U32, EZMAC_PRO_GLOBAL_MSPACE);
-	SEGMENT_VARIABLE(BusyLBT, U8, EZMAC_PRO_GLOBAL_MSPACE);
-	SEGMENT_VARIABLE(EZMacProRandomNumber, U8, EZMAC_PRO_GLOBAL_MSPACE);
-	SEGMENT_VARIABLE(EZMacProLBT_Retrys, U8, EZMAC_PRO_GLOBAL_MSPACE);
+	volatile SEGMENT_VARIABLE(TimeoutLBTI, U32, EZMAC_PRO_GLOBAL_MSPACE);
+	volatile SEGMENT_VARIABLE(BusyLBT, U8, EZMAC_PRO_GLOBAL_MSPACE);
+	volatile SEGMENT_VARIABLE(EZMacProRandomNumber, U8, EZMAC_PRO_GLOBAL_MSPACE);
+	volatile SEGMENT_VARIABLE(EZMacProLBT_Retrys, U8, EZMAC_PRO_GLOBAL_MSPACE);
 #endif
 
 #ifdef PACKET_FORWARDING_SUPPORTED
-	SEGMENT_VARIABLE(ForwardedPacketTable[FORWARDED_PACKET_TABLE_SIZE], ForwardedPacketTableEntry, FORWARDED_PACKET_TABLE_MSPACE);
+	volatile SEGMENT_VARIABLE(ForwardedPacketTable[FORWARDED_PACKET_TABLE_SIZE], ForwardedPacketTableEntry, FORWARDED_PACKET_TABLE_MSPACE);
 #endif
 
 #ifdef ANTENNA_DIVERSITY_ENABLED
-	SEGMENT_VARIABLE(Selected_Antenna, U8, EZMAC_PRO_GLOBAL_MSPACE);
+	volatile SEGMENT_VARIABLE(Selected_Antenna, U8, EZMAC_PRO_GLOBAL_MSPACE);
 #endif
 
 #ifdef MORE_CHANNEL_IS_USED
-	SEGMENT_VARIABLE(SelectedChannel, U8, EZMAC_PRO_GLOBAL_MSPACE);
-	SEGMENT_VARIABLE(maxChannelNumber, U8, EZMAC_PRO_GLOBAL_MSPACE);
+	volatile SEGMENT_VARIABLE(SelectedChannel, U8, EZMAC_PRO_GLOBAL_MSPACE);
+	volatile SEGMENT_VARIABLE(maxChannelNumber, U8, EZMAC_PRO_GLOBAL_MSPACE);
 #endif //MORE_CHANNEL_IS_USED
 
 /* ======================================= *
@@ -139,14 +139,14 @@ MacParams EZMacPRO_Init(void)
 
 	// set time out to XTAL start-up time
 	macTimeout(TIMEOUT_XTAL_START);
-	ENABLE_MAC_INTERRUPTS();
 
 	// Send the Software Reset Command to the radio
 	// use direct write since LBD and WUT initially disabled
-	macSpiWriteReg (SI4432_OPERATING_AND_FUNCTION_CONTROL_1, (SI4432_SWRES|SI4432_XTON));
+	ENABLE_MAC_INTERRUPTS();
+	macSpiWriteReg (SI4432_OPERATING_AND_FUNCTION_CONTROL_1, (SI4432_SWRES | SI4432_XTON));
 
 	// wait until the MAC goes to Idle State
-	while (EZMacProReg.name.MSR != EZMAC_PRO_IDLE);
+	while (EZMacProReg.name.MSR == EZMAC_PRO_WAKE_UP);
 
 	// clear Chip ready and POR interrupts
 	macSpiWriteReg(SI4432_INTERRUPT_ENABLE_1, 0);
@@ -301,12 +301,12 @@ MacParams EZMacPRO_Wake_Up(void)
 		macSpiReadReg(SI4432_INTERRUPT_STATUS_2);
 		CLEAR_MAC_EXT_INTERRUPT();
 
-		DELAY_uS(10 * TIMEOUT_XTAL_START);
+		DELAY_uS(TIMEOUT_XTAL_START);
 
 		EZMacProReg.name.MSR = EZMAC_PRO_WAKE_UP;	// next state is WAKE UP state
 		EZMacPRO_StateWakeUpEntered();				// Call the wake-up state entered callback.
 		// start timer with XTAL startup timeout
-		macTimeout(10 * TIMEOUT_XTAL_START);
+		macTimeout(TIMEOUT_XTAL_START);
 		ENABLE_MAC_INTERRUPTS();
 
 		// start Si443x XTAL
@@ -389,10 +389,10 @@ MacParams EZMacPRO_Transmit(void)
 	DISABLE_MAC_INTERRUPTS();
 
 	#ifndef B1_ONLY
-	if (EZMacProReg.name.DTR == 0) //if the rev V2 chip is used
- 	{	//this register setting is needed (only rev V2)
+	if (EZMacProReg.name.DTR == 0) // if the rev V2 chip is used
+ 	{	// this register setting is needed (only rev V2)
 		SpiWriteReg (SI4432_CRYSTAL_OSCILLATOR_CONTROL_TEST, 0x24);
-		//set the TX deviation (only rev V2)
+		// set the TX deviation (only rev V2)
 		SpiWriteReg (SI4432_FREQUENCY_DEVIATION, TX_Freq_dev);
 	}
 	#endif
@@ -447,7 +447,7 @@ MacParams EZMacPRO_Transmit(void)
 	#ifdef EXTENDED_PACKET_FORMAT
 	// Assemble the CTRL byte
 	// set radius field
-	temp8 = (EZMacProReg.name.MCR >>3) & 0x03;
+	temp8 = (EZMacProReg.name.MCR >> 3) & 0x03;
 	if (EZMacProReg.name.TCR & 0x80)
 		temp8 |= 0x04;		//ACK request
 	// set the Sequence number
@@ -487,33 +487,27 @@ MacParams EZMacPRO_Transmit(void)
 
 		// disable all Si443x interrupt enable 1 sources
 		SpiWriteReg(SI4432_INTERRUPT_ENABLE_1, 0x00);
-		// enable RSSI interrupt
-		macSetEnable2(SI4432_ENRSSI);
-		//clear the LBT variable
-		EZMacProLBT_Retrys = 0;
+		macSetEnable2(SI4432_ENRSSI);		// enable RSSI interrupt
+		EZMacProLBT_Retrys = 0;				//clear the LBT variable
 		BusyLBT = 0;
-		// go to next state
+											// go to next state
 		EZMacProReg.name.MSR = TX_STATE_BIT | TX_STATE_LBT_START_LISTEN;
-		// Call the TX state entered callback.
-		EZMacPRO_StateTxEntered();
-
-		// first timeout is fix 0.5ms
-		// start timer with LBT ETSI fix timeout
-		macTimeout(TIMEOUT_LBTI_ETSI);
+		EZMacPRO_StateTxEntered();			// Call the TX state entered callback.
+											// first timeout is fix 0.5ms
+		macTimeout(TIMEOUT_LBTI_ETSI);		// start timer with LBT ETSI fix timeout
 		ENABLE_MAC_INTERRUPTS();
-		// enable RX
-		macSetFunction1 (SI4432_RXON | SI4432_XTON);
+		macSetFunction1 (SI4432_RXON | SI4432_XTON);	// enable RX
 		return MAC_OK;
 	}
 	#endif
 
 	// go straight to transmit without LBT
 	SpiWriteReg (SI4432_INTERRUPT_ENABLE_1, SI4432_ENPKSENT);	// enable ENPKSENT bit
-	macSetEnable2 (0x00);											// disable enable 2 using function
+	macSetEnable2 (0x00);										// disable enable 2 using function
 	SpiReadReg(SI4432_INTERRUPT_STATUS_1);						// clear interrupt status
 	SpiReadReg(SI4432_INTERRUPT_STATUS_2);
 	EZMacProReg.name.MSR = TX_STATE_BIT | TX_STATE_WAIT_FOR_TX;
-	//Call the TX state entered callback.
+	// Call the TX state entered callback.
 	EZMacPRO_StateTxEntered();
 
 	// start timer with packet transmit timeout
@@ -648,7 +642,7 @@ MacParams EZMacPRO_Reg_Write(MacRegs name, U8 value)
 		// order must match enumerations
 		// mandatory elements listed first
 		case MCR:	// Master Control Register
-			//Set the header length according to CID control bit
+			// Set the header length according to CID control bit
 #ifdef EXTENDED_PACKET_FORMAT
 			if ( value & 0x80 )	//if CID is used
 				// header length 4 byte(CTRL+CID+SID+DID)
@@ -664,7 +658,6 @@ MacParams EZMacPRO_Reg_Write(MacRegs name, U8 value)
 				// header length 2 byte(SID+DID)
 				macSpiWriteReg(SI4432_HEADER_CONTROL_2, SI4432_HDLEN_2BYTE | (SYNC_WORD_LENGTH - 1) << 1);
 #endif
-
 			// Master Control Register(set modem, frequency parameters and preamble length according to the data rate)
 			SetRfParameters( value );
 			macUpdateDynamicTimeouts(value, EZMacProReg.name.MPL);
@@ -1439,9 +1432,7 @@ void macUpdateDynamicTimeouts(U8 mcr, U8 mpl)
 	// use n for radius
 	n = (mcr & 0x18) >> 3;
 	if (n)
-	{
 		TimeoutACK = ((n + 1) * TimeoutACK) + (n * TimeoutTX_Packet) + (n * MAX_LBT_WAITING_TIME * MAX_LBT_RETRIES);
-	}
 	#endif
 #endif
 }

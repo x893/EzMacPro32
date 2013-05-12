@@ -18,6 +18,7 @@
 	#define STM32_MODULE
 	#define SPI_ENABLED
 	#define TIMER_ENABLED
+	#define TRACE_ENABLED
 
 #endif //STM32
 

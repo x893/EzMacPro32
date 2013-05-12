@@ -36,13 +36,14 @@
 	} while (0)
 #define SET_MAC_TIMER_INTERRUPT(enable)		\
 	do {									\
-		if (enable)							\
+		if (enable)	{						\
 			ENABLE_MAC_TIMER_INTERRUPT();	\
+		}									\
 	} while (0)
 
 #define TIMEOUT_US(n)                   ((U32)(n) * (SYSCLK_HZ / MAC_TIMER_PRESCALER / 1000000L))
 // n = transmission speed
-#define BYTE_TIME(n)                    ((SYSCLK_HZ / n) * 8 / MAC_TIMER_PRESCALER)
+#define BYTE_TIME(n)                    ((SYSCLK_HZ / n) * 20 / MAC_TIMER_PRESCALER)
 
 #define DELAY_1MS_TIMER2                (U16)((SYSCLK_HZ / DELAY_TIMER_PRESCALER) / 1012)
 #define DELAY_2MS_TIMER2                (U16)((SYSCLK_HZ / DELAY_TIMER_PRESCALER) /  506)

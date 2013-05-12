@@ -211,6 +211,9 @@ void SprintfSlaveInfo(SlaveInfoTable_t * slave, U8 * s)
 
 void SprintfSlaveNotAssoc(U8 * s)
 {
+#ifdef __CC_ARM	//if compiled with Keil
+	sprintf((char *)s, "S(--): not associated");
+#endif //__C51__
 #ifdef __C51__	//if compiled with Keil
 	sprintf(s, "S(--): not associated");
 #endif //__C51__

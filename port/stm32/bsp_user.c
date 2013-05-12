@@ -35,12 +35,11 @@ void BoardInit(void)
 	SPI_InitTypeDef   SPI_InitStructure;
 	EXTI_InitTypeDef   EXTI_InitStructure;
 	NVIC_InitTypeDef   NVIC_InitStructure;
-
 	RCC_APB2PeriphClockCmd( 0
-			| RCC_APB2Periph_GPIOA
-			| RCC_APB2Periph_GPIOB
-			| RCC_APB2Periph_AFIO
-			, ENABLE);
+		| RCC_APB2Periph_GPIOA
+		| RCC_APB2Periph_GPIOB
+		| RCC_APB2Periph_AFIO
+		, ENABLE);
 
 	DBGMCU_Config( 0
 		| DBGMCU_TIM2_STOP
@@ -69,9 +68,9 @@ void BoardInit(void)
 	RF_MOSI_INIT();
 	RF_IRQ_INIT();
 
-	DELAY_uS(5 * DELAY_1MS_TIMER2);
+	DELAY_uS(10 * DELAY_1MS_TIMER2);
 	RF_SDN_LOW();
-	DELAY_uS(20 * DELAY_1MS_TIMER2);
+	DELAY_uS(50 * DELAY_1MS_TIMER2);
 
 	RF_SPI_CLOCK();
 
@@ -99,6 +98,7 @@ void BoardInit(void)
 	CLEAR_MAC_EXT_INTERRUPT();
 
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
+
 	NVIC_InitStructure.NVIC_IRQChannel = RF_IRQ_EXT_IRQ;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x0;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0;
@@ -109,6 +109,7 @@ void BoardInit(void)
     RTC_INIT();
 #endif
 #ifdef UART0_ENABLED
-    Uart0Init();
+	Uart0Init();
 #endif
 }
+

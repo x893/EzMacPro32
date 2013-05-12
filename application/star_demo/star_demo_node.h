@@ -43,15 +43,15 @@
 /*!
  * If 0x08, Listen Before Talk will be performed before each frame transmission.
  */
-//#define LBT_SWITCH					(0x08)
-#define LBT_SWITCH						(0x00)
+#define LBT_SWITCH					(0x08)
+// #define LBT_SWITCH					(0x00)
 
 /*!
  * This number is used in the generation of temporary random address, to make
  * sure none of the permanent addresses are used temporarily in the association
  * procedure.
  */
-#define MAX_NMBR_OF_SLAVES				(200)
+#define MAX_NMBR_OF_SLAVES				(4)
 
 /*!
  * Addresses used in this demo.
@@ -199,7 +199,7 @@ typedef struct
  */
 typedef struct
 {
-	U8	type;
+	volatile U8	type;
 } FrameBeacon_t;
 
 typedef struct
@@ -238,11 +238,11 @@ typedef struct
 typedef union
 {
 	FrameBeacon_t			beacon;
-	FrameAssocReq_t		 assocReq;
+	FrameAssocReq_t			assocReq;
 	FrameAssocResp_t		assocResp;
-	FrameAssocRespAck_t	 assocRespAck;
+	FrameAssocRespAck_t		assocRespAck;
 	FrameStatusUpdateReq_t	statusUpdateReq;
-	FrameStatusUpdateResp_t statusUpdateResp;
+	FrameStatusUpdateResp_t	statusUpdateResp;
 } Frame_u;
 
 typedef union
@@ -268,7 +268,7 @@ extern SEGMENT_VARIABLE(packetLength, U8, APPLICATION_MSPACE);
 extern SEGMENT_VARIABLE(rndCounter, U16, APPLICATION_MSPACE);
 extern SEGMENT_VARIABLE(masterAddr, Addr_t, APPLICATION_MSPACE);
 extern SEGMENT_VARIABLE(rndAddr, Addr_t, APPLICATION_MSPACE);
-extern SEGMENT_VARIABLE(DEMO_SR, U8, APPLICATION_MSPACE);
+extern volatile SEGMENT_VARIABLE(DEMO_SR, U8, APPLICATION_MSPACE);
 
 /* ==================================== *
  *	F U N C T I O N	P R O T O T Y P E S	*
@@ -280,20 +280,18 @@ extern SEGMENT_VARIABLE(DEMO_SR, U8, APPLICATION_MSPACE);
 void StateMachine_Init(void);
 void StateMachine(void);
 
-// #ifdef MASTER_NODE
-	void MasterNodeBoot(void);
-	void MasterNodeAssociate(void);
-	void MasterNodeStatusUpdate(void);
-	void MasterNodeSleep(void);
-	U8 SearchFreeSlotInAssocTable(void);
-	void PrintSlaveInfo(void);
-// #else
-	void SlaveNodeBoot(void);
-	void SlaveNodeBeacon(void);
-	void SlaveNodeAssociate(void);
-	void SlaveNodeStatusUpdate(void);
-	void SlaveNodeSleep(void);
-	U8 GenTempRndAddr(void);
-// #endif
+void MasterNodeBoot(void);
+void MasterNodeAssociate(void);
+void MasterNodeStatusUpdate(void);
+void MasterNodeSleep(void);
+U8 SearchFreeSlotInAssocTable(void);
+void PrintSlaveInfo(void);
+
+void SlaveNodeBoot(void);
+void SlaveNodeBeacon(void);
+void SlaveNodeAssociate(void);
+void SlaveNodeStatusUpdate(void);
+void SlaveNodeSleep(void);
+U8 GenTempRndAddr(void);
 
 #endif

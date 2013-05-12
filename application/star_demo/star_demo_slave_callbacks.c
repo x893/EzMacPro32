@@ -21,24 +21,24 @@
 				 *	 G L O B A L	V A R I A B L E S	 *
 				 * ======================================= */
 
-BIT fEZMacPRO_StateWakeUpEntered	= 0;
-BIT fEZMacPRO_StateSleepEntered		= 0;
-BIT fEZMacPRO_StateIdleEntered		= 0;
-BIT fEZMacPRO_StateRxEntered		= 0;
-BIT fEZMacPRO_StateTxEntered		= 0;
-BIT fEZMacPRO_StateErrorEntered		= 0;
+volatile BIT fEZMacPRO_StateWakeUpEntered	= 0;
+volatile BIT fEZMacPRO_StateSleepEntered	= 0;
+volatile BIT fEZMacPRO_StateIdleEntered		= 0;
+volatile BIT fEZMacPRO_StateRxEntered		= 0;
+volatile BIT fEZMacPRO_StateTxEntered		= 0;
+volatile BIT fEZMacPRO_StateErrorEntered	= 0;
 
-BIT fEZMacPRO_LFTimerExpired		= 0;
-BIT fEZMacPRO_LowBattery			= 0;
-BIT fEZMacPRO_SyncWordReceived		= 0;
-BIT fEZMacPRO_CRCError				= 0;
-BIT fEZMacPRO_PacketDiscarded		= 0;
-BIT fEZMacPRO_PacketReceived		= 0;
-BIT fEZMacPRO_PacketForwarding		= 0;
-BIT fEZMacPRO_PacketSent			= 0;
-BIT fEZMacPRO_LBTTimeout			= 0;
-BIT fEZMacPRO_AckTimeout			= 0;
-BIT fEZMacPRO_AckSending			= 0;
+volatile BIT fEZMacPRO_LFTimerExpired		= 0;
+volatile BIT fEZMacPRO_LowBattery			= 0;
+volatile BIT fEZMacPRO_SyncWordReceived		= 0;
+volatile BIT fEZMacPRO_CRCError				= 0;
+volatile BIT fEZMacPRO_PacketDiscarded		= 0;
+volatile BIT fEZMacPRO_PacketReceived		= 0;
+volatile BIT fEZMacPRO_PacketForwarding		= 0;
+volatile BIT fEZMacPRO_PacketSent			= 0;
+volatile BIT fEZMacPRO_LBTTimeout			= 0;
+volatile BIT fEZMacPRO_AckTimeout			= 0;
+volatile BIT fEZMacPRO_AckSending			= 0;
 
 				/* ======================================= *
 				 *	C A L L B A C K	F U N C T I O N S	*

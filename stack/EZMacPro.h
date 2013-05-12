@@ -14,16 +14,15 @@
 #ifndef _EZMACPRO_H_
 #define _EZMACPRO_H_
 
-
-				/* ======================================= *
-				 *			D E F I N I T I O N S			*
-				 * ======================================= */
+/* ==================================== *
+ *			D E F I N I T I O N S		*
+ * ==================================== */
 
 /*!
  * Fixed timeouts.
  */
 // XTAL timeout 1.5ms
-#define TIMEOUT_XTAL_START		TIMEOUT_US(1500L)
+#define TIMEOUT_XTAL_START		TIMEOUT_US(50000L)
 // LBT ETSI timeout 500us
 #define TIMEOUT_LBTI_ETSI		TIMEOUT_US(500L)
 //fixed timeout 5ms
@@ -215,14 +214,14 @@ typedef enum
 	FR47,
 	FR48,
 	FR49,
-#endif//MORE_CHANNEL_IS_USED
+#endif
 	FSR,						// Frequency Select Register
 #ifdef FOUR_CHANNEL_IS_USED
 	EC0,						// Error Counter of Frequency 0
 	EC1,						// Error Counter of Frequency 1
 	EC2,						// Error Counter of Frequency 2
 	EC3,						// Error Counter of Frequency 3
-#endif//FOUR_CHANNEL_IS_USED
+#endif
 	PFCR,						// Packet Filter Control Register
 	SFLT,						// Sender ID Filter
 	SMSK,						// Sender ID Filter Mask
@@ -262,96 +261,96 @@ typedef enum
 typedef struct EZMacProRegStruct
 {
 	// mandatory elements listed first
-	U8	MCR;							// Master Control Register
-	U8	SECR;						 // State & Error Counter Control Register
-	U8	TCR;							// Transmit Control Register
-	U8	RCR;							// Receiver Control Register
-	U8	FR0;							// Frequency Register 0
-	U8	FR1;							// Frequency Register 1
-	U8	FR2;							// Frequency Register 2
-	U8	FR3;							// Frequency Register 3
+	volatile U8	MCR;							// Master Control Register
+	volatile U8	SECR;						 // State & Error Counter Control Register
+	volatile U8	TCR;							// Transmit Control Register
+	volatile U8	RCR;							// Receiver Control Register
+	volatile U8	FR0;							// Frequency Register 0
+	volatile U8	FR1;							// Frequency Register 1
+	volatile U8	FR2;							// Frequency Register 2
+	volatile U8	FR3;							// Frequency Register 3
 #ifdef MORE_CHANNEL_IS_USED
-	U8		FR4;
-	U8		FR5;
-	U8		FR6;
-	U8		FR7;
-	U8		FR8;
-	U8		FR9;
-	U8		FR10;
-	U8		FR11;
-	U8		FR12;
-	U8		FR13;
-	U8		FR14;
-	U8		FR15;
-	U8		FR16;
-	U8		FR17;
-	U8		FR18;
-	U8		FR19;
-	U8		FR20;
-	U8		FR21;
-	U8		FR22;
-	U8		FR23;
-	U8		FR24;
-	U8		FR25;
-	U8		FR26;
-	U8		FR27;
-	U8		FR28;
-	U8		FR29;
-	U8		FR30;
-	U8		FR31;
-	U8		FR32;
-	U8		FR33;
-	U8		FR34;
-	U8		FR35;
-	U8		FR36;
-	U8		FR37;
-	U8		FR38;
-	U8		FR39;
-	U8		FR40;
-	U8		FR41;
-	U8		FR42;
-	U8		FR43;
-	U8		FR44;
-	U8		FR45;
-	U8		FR46;
-	U8		FR47;
-	U8		FR48;
-	U8		FR49;
-#endif//MORE_CHANNEL_IS_USED
-	U8 	FSR;									// Frequency Select Register
+	volatile U8		FR4;
+	volatile U8		FR5;
+	volatile U8		FR6;
+	volatile U8		FR7;
+	volatile U8		FR8;
+	volatile U8		FR9;
+	volatile U8		FR10;
+	volatile U8		FR11;
+	volatile U8		FR12;
+	volatile U8		FR13;
+	volatile U8		FR14;
+	volatile U8		FR15;
+	volatile U8		FR16;
+	volatile U8		FR17;
+	volatile U8		FR18;
+	volatile U8		FR19;
+	volatile U8		FR20;
+	volatile U8		FR21;
+	volatile U8		FR22;
+	volatile U8		FR23;
+	volatile U8		FR24;
+	volatile U8		FR25;
+	volatile U8		FR26;
+	volatile U8		FR27;
+	volatile U8		FR28;
+	volatile U8		FR29;
+	volatile U8		FR30;
+	volatile U8		FR31;
+	volatile U8		FR32;
+	volatile U8		FR33;
+	volatile U8		FR34;
+	volatile U8		FR35;
+	volatile U8		FR36;
+	volatile U8		FR37;
+	volatile U8		FR38;
+	volatile U8		FR39;
+	volatile U8		FR40;
+	volatile U8		FR41;
+	volatile U8		FR42;
+	volatile U8		FR43;
+	volatile U8		FR44;
+	volatile U8		FR45;
+	volatile U8		FR46;
+	volatile U8		FR47;
+	volatile U8		FR48;
+	volatile U8		FR49;
+#endif
+	volatile U8 	FSR;									// Frequency Select Register
 #ifdef FOUR_CHANNEL_IS_USED
-	U8	EC0;							// Error Counter of Frequency 0
-	U8	EC1;							// Error Counter of Frequency 1
-	U8	EC2;							// Error Counter of Frequency 2
-	U8	EC3;							// Error Counter of Frequency 3
+	volatile U8	EC0;							// Error Counter of Frequency 0
+	volatile U8	EC1;							// Error Counter of Frequency 1
+	volatile U8	EC2;							// Error Counter of Frequency 2
+	volatile U8	EC3;							// Error Counter of Frequency 3
 #endif//FOUR_CHANNEL_IS_USED
-	U8	PFCR;						 // Packet Filter Control Register
-	U8	SFLT;						 // Sender ID Filter
-	U8	SMSK;						 // Sender ID Filter Mask
-	U8	MCA_MCM;						// Multicast Address / Multicast Mask
-	U8	MPL;							// Maximum Packet Length
-	U8	MSR;							// MAC Status Register
-	U8	RSR;							// Receive Status Register
-	U8 	RFSR;									// Received Frequency Status Register
-	U8	RSSI;						 // Received Signal Strength Indicator
-	U8	SCID ;						// Self Customer ID
-	U8	SFID;						 // Self ID
-	U8	RCTRL;						// Received Control Byte
-	U8	RCID;						 // Received Customer ID
-	U8	RSID;						 // Received Sender ID
-	U8	DID;							// Destination ID
-	U8	PLEN;						 // Payload Length
+	volatile U8	PFCR;						// Packet Filter Control Register
+	volatile U8	SFLT;						// Sender ID Filter
+	volatile U8	SMSK;						// Sender ID Filter Mask
+	volatile U8	MCA_MCM;					// Multicast Address / Multicast Mask
+	volatile U8	MPL;						// Maximum Packet Length
+	volatile U8	MSR;				// MAC Status Register
+	volatile U8	RSR;						// Receive Status Register
+	volatile U8 	RFSR;						// Received Frequency Status Register
+	volatile U8	RSSI;						// Received Signal Strength Indicator
+	volatile U8	SCID ;						// Self Customer ID
+	volatile U8	SFID;						// Self ID
+	volatile U8	RCTRL;						// Received Control Byte
+	volatile U8	RCID;						// Received Customer ID
+	volatile U8	RSID;						// Received Sender ID
+	volatile U8	DID;						// Destination ID
+	volatile U8	PLEN;						// Payload Length
 #ifdef TRANSCEIVER_OPERATION
-	U8	LBTIR;						// Listen Before Talk	Interval Register
-	U8	LBTLR;						// Listen Before Talk Limit Register
+	volatile U8	LBTIR;						// Listen Before Talk	Interval Register
+	volatile U8	LBTLR;						// Listen Before Talk Limit Register
 #endif//TRANSCEIVER_OPERATION
-	U8	LFTMR0;						// Low Frequency Timer Setting Register 0
-	U8	LFTMR1;						// Low Frequency Timer Setting Register 1
-	U8	LFTMR2;						// Low Frequency Timer Setting Register 2
-	U8	LBDR;						 // Low Battery Detect Register
-	U8	ADCTSR;						// ADC and Temperature Sensor Register
-	U8	ADCTSV;						// ADC/Temperature Value Register
-	U8		DTR;									// Device Type Register
+	volatile U8	LFTMR0;						// Low Frequency Timer Setting Register 0
+	volatile U8	LFTMR1;						// Low Frequency Timer Setting Register 1
+	volatile U8	LFTMR2;						// Low Frequency Timer Setting Register 2
+	volatile U8	LBDR;						// Low Battery Detect Register
+	volatile U8	ADCTSR;						// ADC and Temperature Sensor Register
+	volatile U8	ADCTSV;						// ADC/Temperature Value Register
+	volatile U8	DTR;						// Device Type Register
 
 } EZMacProRegStruct;
 //------------------------------------------------------------------------------------------------
@@ -376,40 +375,40 @@ typedef struct ForwardedPacketTableEntry
 #pragma pack(8)
 #endif
 
-/* ======================================= *
- *	 G L O B A L	V A R I A B L E S	 *
- * ======================================= */
+/* ==================================== *
+ *	 G L O B A L	V A R I A B L E S	*
+ * ==================================== */
 
-extern SEGMENT_VARIABLE(EZMacProReg, EZMacProUnion, REGISTER_MSPACE);
-extern BIT fHeaderErrorOccurred;
+extern volatile SEGMENT_VARIABLE(EZMacProReg, EZMacProUnion, REGISTER_MSPACE);
+extern volatile BIT fHeaderErrorOccurred;
 extern SEGMENT_VARIABLE(RxBuffer[RECEIVED_BUFFER_SIZE], U8 , BUFFER_MSPACE);
-extern SEGMENT_VARIABLE(ForwardedPacketTable[FORWARDED_PACKET_TABLE_SIZE], ForwardedPacketTableEntry, FORWARDED_PACKET_TABLE_MSPACE);
-extern SEGMENT_VARIABLE(AckBufSize, U8 , EZMAC_PRO_GLOBAL_MSPACE);
-extern SEGMENT_VARIABLE(AckBuffer[ACK_BUFFER_SIZE], U8 , BUFFER_MSPACE);
-extern SEGMENT_VARIABLE(EZMacProLBT_Retrys, U8, EZMAC_PRO_GLOBAL_MSPACE);
-extern SEGMENT_VARIABLE(BusyLBT, U8, EZMAC_PRO_GLOBAL_MSPACE);
-extern SEGMENT_VARIABLE(EZMacProSequenceNumber, U8, EZMAC_PRO_GLOBAL_MSPACE);
-extern SEGMENT_VARIABLE(EZMacProCurrentChannel, U8, EZMAC_PRO_GLOBAL_MSPACE);
-extern SEGMENT_VARIABLE(EZMacProRSSIvalue, U8, EZMAC_PRO_GLOBAL_MSPACE);
-extern SEGMENT_VARIABLE(EZMacProReceiveStatus, U8, EZMAC_PRO_GLOBAL_MSPACE);
-extern SEGMENT_VARIABLE(RX_Freq_dev, U8, EZMAC_PRO_GLOBAL_MSPACE);
-extern SEGMENT_VARIABLE(TX_Freq_dev, U8, EZMAC_PRO_GLOBAL_MSPACE);
+extern volatile SEGMENT_VARIABLE(ForwardedPacketTable[FORWARDED_PACKET_TABLE_SIZE], ForwardedPacketTableEntry, FORWARDED_PACKET_TABLE_MSPACE);
+extern volatile SEGMENT_VARIABLE(AckBufSize, U8 , EZMAC_PRO_GLOBAL_MSPACE);
+extern volatile SEGMENT_VARIABLE(AckBuffer[ACK_BUFFER_SIZE], U8 , BUFFER_MSPACE);
+extern volatile SEGMENT_VARIABLE(EZMacProLBT_Retrys, U8, EZMAC_PRO_GLOBAL_MSPACE);
+extern volatile SEGMENT_VARIABLE(BusyLBT, U8, EZMAC_PRO_GLOBAL_MSPACE);
+extern volatile SEGMENT_VARIABLE(EZMacProSequenceNumber, U8, EZMAC_PRO_GLOBAL_MSPACE);
+extern volatile SEGMENT_VARIABLE(EZMacProCurrentChannel, U8, EZMAC_PRO_GLOBAL_MSPACE);
+extern volatile SEGMENT_VARIABLE(EZMacProRSSIvalue, U8, EZMAC_PRO_GLOBAL_MSPACE);
+extern volatile SEGMENT_VARIABLE(EZMacProReceiveStatus, U8, EZMAC_PRO_GLOBAL_MSPACE);
+extern volatile SEGMENT_VARIABLE(RX_Freq_dev, U8, EZMAC_PRO_GLOBAL_MSPACE);
+extern volatile SEGMENT_VARIABLE(TX_Freq_dev, U8, EZMAC_PRO_GLOBAL_MSPACE);
 // dynamic timeouts- depend on data rate and MAC settings
-extern SEGMENT_VARIABLE(TimeoutSyncWord, U32, EZMAC_PRO_GLOBAL_MSPACE);
-extern SEGMENT_VARIABLE(TimeoutRX_Packet, U32, EZMAC_PRO_GLOBAL_MSPACE);
-extern SEGMENT_VARIABLE(TimeoutTX_Packet, U32, EZMAC_PRO_GLOBAL_MSPACE);
-extern SEGMENT_VARIABLE(TimeoutACK, U32, EZMAC_PRO_GLOBAL_MSPACE);
-extern SEGMENT_VARIABLE(TimeoutChannelSearch, U32, EZMAC_PRO_GLOBAL_MSPACE);
-extern SEGMENT_VARIABLE(EZMacProRandomNumber, U8, EZMAC_PRO_GLOBAL_MSPACE);
-extern SEGMENT_VARIABLE(TimeoutLBTI, U32, EZMAC_PRO_GLOBAL_MSPACE);
-extern SEGMENT_VARIABLE(Selected_Antenna, U8, EZMAC_PRO_GLOBAL_MSPACE);
-extern SEGMENT_VARIABLE(SelectedChannel, U8, EZMAC_PRO_GLOBAL_MSPACE);
-extern SEGMENT_VARIABLE(maxChannelNumber, U8, EZMAC_PRO_GLOBAL_MSPACE);
-extern SEGMENT_VARIABLE(PreamRegValue, U8, EZMAC_PRO_GLOBAL_MSPACE);
+extern volatile SEGMENT_VARIABLE(TimeoutSyncWord, U32, EZMAC_PRO_GLOBAL_MSPACE);
+extern volatile SEGMENT_VARIABLE(TimeoutRX_Packet, U32, EZMAC_PRO_GLOBAL_MSPACE);
+extern volatile SEGMENT_VARIABLE(TimeoutTX_Packet, U32, EZMAC_PRO_GLOBAL_MSPACE);
+extern volatile SEGMENT_VARIABLE(TimeoutACK, U32, EZMAC_PRO_GLOBAL_MSPACE);
+extern volatile SEGMENT_VARIABLE(TimeoutChannelSearch, U32, EZMAC_PRO_GLOBAL_MSPACE);
+extern volatile SEGMENT_VARIABLE(EZMacProRandomNumber, U8, EZMAC_PRO_GLOBAL_MSPACE);
+extern volatile SEGMENT_VARIABLE(TimeoutLBTI, U32, EZMAC_PRO_GLOBAL_MSPACE);
+extern volatile SEGMENT_VARIABLE(Selected_Antenna, U8, EZMAC_PRO_GLOBAL_MSPACE);
+extern volatile SEGMENT_VARIABLE(SelectedChannel, U8, EZMAC_PRO_GLOBAL_MSPACE);
+extern volatile SEGMENT_VARIABLE(maxChannelNumber, U8, EZMAC_PRO_GLOBAL_MSPACE);
+extern volatile SEGMENT_VARIABLE(PreamRegValue, U8, EZMAC_PRO_GLOBAL_MSPACE);
 
-/* ======================================= *
+/* ==================================== *
  *	F U N C T I O N	P R O T O T Y P E S	*
- * ======================================= */
+ * ==================================== */
 
 MacParams EZMacPRO_Init(void);
 MacParams EZMacPRO_Wake_Up(void);

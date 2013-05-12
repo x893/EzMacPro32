@@ -14,33 +14,31 @@
 #ifndef _EZMACPRO_CALLBACKS_H_
 #define _EZMACPRO_CALLBACKS_H_
 
+/* ======================================= *
+ *     G L O B A L   V A R I A B L E S     *
+ * ======================================= */
 
-                /* ======================================= *
-                 *     G L O B A L   V A R I A B L E S     *
-                 * ======================================= */
+extern volatile BIT fEZMacPRO_StateWakeUpEntered;
+extern volatile BIT fEZMacPRO_StateSleepEntered;
+extern volatile BIT fEZMacPRO_StateIdleEntered;
+extern volatile BIT fEZMacPRO_StateRxEntered;
+extern volatile BIT fEZMacPRO_StateTxEntered;
+extern volatile BIT fEZMacPRO_StateErrorEntered;
+extern volatile BIT fEZMacPRO_LFTimerExpired;
+extern volatile BIT fEZMacPRO_LowBattery;
+extern volatile BIT fEZMacPRO_SyncWordReceived;
+extern volatile BIT fEZMacPRO_CRCError;
+extern volatile BIT fEZMacPRO_PacketDiscarded;
+extern volatile BIT fEZMacPRO_PacketReceived;
+extern volatile BIT fEZMacPRO_PacketForwarding;
+extern volatile BIT fEZMacPRO_PacketSent;
+extern volatile BIT fEZMacPRO_LBTTimeout;
+extern volatile BIT fEZMacPRO_AckTimeout;
+extern volatile BIT fEZMacPRO_AckSending;
 
-extern BIT fEZMacPRO_StateWakeUpEntered;
-extern BIT fEZMacPRO_StateSleepEntered;
-extern BIT fEZMacPRO_StateIdleEntered;
-extern BIT fEZMacPRO_StateRxEntered;
-extern BIT fEZMacPRO_StateTxEntered;
-extern BIT fEZMacPRO_StateErrorEntered;
-extern BIT fEZMacPRO_LFTimerExpired;
-extern BIT fEZMacPRO_LowBattery;
-extern BIT fEZMacPRO_SyncWordReceived;
-extern BIT fEZMacPRO_CRCError;
-extern BIT fEZMacPRO_PacketDiscarded;
-extern BIT fEZMacPRO_PacketReceived;
-extern BIT fEZMacPRO_PacketForwarding;
-extern BIT fEZMacPRO_PacketSent;
-extern BIT fEZMacPRO_LBTTimeout;
-extern BIT fEZMacPRO_AckTimeout;
-extern BIT fEZMacPRO_AckSending;
-
-
-                /* ======================================= *
-                 *  F U N C T I O N   P R O T O T Y P E S  *
-                 * ======================================= */
+/* ======================================= *
+ *  F U N C T I O N   P R O T O T Y P E S  *
+ * ======================================= */
 
 void EZMacPRO_StateWakeUpEntered(void);
 void EZMacPRO_StateSleepEntered(void);
@@ -59,7 +57,5 @@ void EZMacPRO_CRCError(void);
 void EZMacPRO_LBTTimeout(void);
 void EZMacPRO_AckTimeout(void);
 void EZMacPRO_AckSending(void);
-
-
 
 #endif //_EZMACPRO_CALLBACKS_H_

@@ -139,12 +139,9 @@ void timerIntWakeUp (void)
 #ifndef RECEIVER_ONLY_OPERATION
 void timerIntTX_StateMachine (U8 state)
 {
-
 	#ifdef TRANSCEIVER_OPERATION
 	U32 timeout;
 	#endif
-
-
 	#ifdef ANTENNA_DIVERSITY_ENABLED
 		#ifndef B1_ONLY
 	U8 temp8;

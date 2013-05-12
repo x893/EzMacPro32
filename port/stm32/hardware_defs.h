@@ -30,11 +30,11 @@
 #define RF_MOSI_PIN			PA7
 
 #define RF_IRQ_PIN			PA3
-#define RF_IRQ_EXT_PORT		GPIO_PortSourceGPIOA
-#define RF_IRQ_EXT_PIN		GPIO_PinSource3
-#define RF_IRQ_EXT_LINE		EXTI_Line3
 #define RF_IRQ_EXT_IRQ		EXTI3_IRQn
 #define externalIntISR		EXTI3_IRQHandler
+#define RF_IRQ_EXT_PORT		((uint8_t)((RF_IRQ_PIN & 0xF0) >> 4))
+#define RF_IRQ_EXT_PIN		PIN_NUMBER(RF_IRQ_PIN)
+#define RF_IRQ_EXT_LINE		PIN_MASK(RF_IRQ_PIN)
 	
 #define RF_SCLK_INIT()		pinMode ( RF_SCLK_PIN, MODE_AltPushPull_50M )
 #define RF_MOSI_INIT()		pinMode ( RF_MOSI_PIN, MODE_AltPushPull_50M )
@@ -44,13 +44,11 @@
 #define RF_SDN_HIGH()		pinHigh ( RF_SDN_PIN )
 #define RF_SDN_INIT()		pinMode ( RF_SDN_PIN, MODE_PushPull_2M)
 
-// pinLow  ( RF_NSS_PIN )
-// pinHigh ( RF_NSS_PIN )
-#define RF_NSS_LOW()		GPIOA->BRR  = (1 << (RF_NSS_PIN & 0x0F))
-#define RF_NSS_HIGH()		GPIOA->BSRR = (1 << (RF_NSS_PIN & 0x0F))
+#define RF_NSS_LOW()		PIN_PORT(RF_NSS_PIN)->BRR  = PIN_MASK(RF_NSS_PIN)
+#define RF_NSS_HIGH()		PIN_PORT(RF_NSS_PIN)->BSRR = PIN_MASK(RF_NSS_PIN)
 #define RF_NSS_INIT()		pinMode ( RF_NSS_PIN, MODE_PushPull_50M )
 
-#define RF_IRQ_READ()		(GPIOA->IDR & (1 << (RF_IRQ_PIN & 0x0F)))
+#define RF_IRQ_READ()		(PIN_PORT(RF_IRQ_PIN)->IDR & PIN_MASK(RF_IRQ_PIN))
 #define RF_IRQ_INIT()		pinMode ( RF_IRQ_PIN, MODE_Input )
 
 #define RF_SPI				SPI1
@@ -87,8 +85,9 @@
 	} while (0)
 #define SET_MAC_EXT_INTERRUPT(enable)	\
 	do {								\
-		if (enable)						\
+		if (enable) {					\
 			ENABLE_MAC_EXT_INTERRUPT();	\
+		}								\
 	} while (0)
 
 #define ENABLE_MAC_INTERRUPTS()			\
@@ -104,14 +103,32 @@
 		ENABLE_GLOBAL_INTERRUPTS();			\
 	} while (0)
 
-#define ENABLE_UART_INTERRUPT()         ENABLE_UART0_INTERRUPT()
-#define SET_UART_INTERRUPT_FLAG()       SET_UART0_INTERRUPT_FLAG()
-#define CLEAR_UART_INTERRUPT_FLAG()     CLEAR_UART0_INTERRUPT_FLAG()
-
 /*!
  * UART baud rate.
  */
-#define UART0_BAUDRATE                   (115200L)
+#define UART0_BAUDRATE			(115200L)
+#define USART_PORT				USART1
+#define UART_RX_PIN				PA10
+#define UART_TX_PIN				PA9
+#define USART_CLK				RCC_APB2Periph_USART1
+#define USART_GPIO_CLK			RCC_APB2Periph_GPIOA
+#define USART_IRQn				USART1_IRQn
+#define USART_IRQHandler		USART1_IRQHandler
+#define USART_TX_INIT()			pinMode(UART_TX_PIN, MODE_AltPushPull_50M)
+#define USART_RX_INIT()			pinMode(UART_RX_PIN, MODE_Input_PU)
+#define USART_CLOCK()			\
+	do {											\
+		RCC_APB2PeriphClockCmd( 0					\
+			| USART_GPIO_CLK						\
+			| RCC_APB2Periph_AFIO					\
+			, ENABLE);								\
+		RCC_APB2PeriphClockCmd(USART_CLK, ENABLE);	\
+	} while (0)
+
+
+#define ENABLE_UART0_INTERRUPT()
+#define SET_UART0_INTERRUPT_FLAG()
+#define CLEAR_UART0_INTERRUPT_FLAG()
 
 #define DISABLE_WATCHDOG()
 

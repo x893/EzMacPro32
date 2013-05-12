@@ -1,6 +1,8 @@
 #ifndef __GPIO_H__
 #define __GPIO_H__
 
+#include <stdint.h>
+
 #define MODE_Analog				(GPIO_Mode_AIN)
 #define MODE_Input				(GPIO_Mode_IN_FLOATING)
 #define MODE_Input_PD			(GPIO_Mode_IPD)
@@ -73,8 +75,9 @@
 #define PC14	0x2E
 #define PC15	0x2F
 
-#define PIN_MASK(p)	((uint16_t)1 << (p & 0x0F))
-#define PIN_PORT(p) ((GPIO_TypeDef *)(((uint32_t)(p & 0xF0) << 6) + GPIOA_BASE))
+#define PIN_NUMBER(p)		((uint8_t)(p & 0x0F))
+#define PIN_MASK(p)			((uint16_t)1 << (p & 0x0F))
+#define PIN_PORT(p) 		((GPIO_TypeDef *)(((uint32_t)(p & 0xF0) << 6) + GPIOA_BASE))
 #define PIN_MASK_MODE(m, p)	((uint32_t)(m & 0x0F) << ((p & 0x07) << 2))
 
 void pinMode ( uint8_t pin, uint8_t mode );

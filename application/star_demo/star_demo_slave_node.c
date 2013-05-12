@@ -44,7 +44,7 @@ SEGMENT_VARIABLE(packetLength, U8, APPLICATION_MSPACE);
 SEGMENT_VARIABLE(rndCounter, U16, APPLICATION_MSPACE);
 SEGMENT_VARIABLE(masterAddr, Addr_t, APPLICATION_MSPACE);
 SEGMENT_VARIABLE(rndAddr, Addr_t, APPLICATION_MSPACE);
-SEGMENT_VARIABLE(DEMO_SR, U8, APPLICATION_MSPACE);
+volatile SEGMENT_VARIABLE(DEMO_SR, U8, APPLICATION_MSPACE);
 
 
 				/* ======================================= *
@@ -118,7 +118,7 @@ void SlaveNodeBoot(void)
 			EZMacPRO_Reg_Write(SECR, 0x60);				 	// State after receive is RX state and state after transmit is Idle state
 			EZMacPRO_Reg_Write(RCR, 0x00);					// Search disabled
 			EZMacPRO_Reg_Write(FR0, 0);						// Set used frequency channel
-			EZMacPRO_Reg_Write(TCR, (0x70|LBT_SWITCH));		// LBT enabled/disabled, Output power: +20 dBm, ACK disable, AFC disable
+			EZMacPRO_Reg_Write(TCR, (0x70 | LBT_SWITCH));		// LBT enabled/disabled, Output power: +20 dBm, ACK disable, AFC disable
 			EZMacPRO_Reg_Write(LBDR, 0x80);					// Enable Low Battery Detect
 			EZMacPRO_Reg_Write(PFCR, 0x91);					// CID filter and Mcast addr. filter (MCA mode) are enabled
 			EZMacPRO_Reg_Write(SCID, DEMO_SLAVE_CID);		// Set the Customer ID
@@ -146,8 +146,11 @@ void SlaveNodeBoot(void)
 				EZMacPRO_Reg_Write(SFID, rndAddr.sfid);
 
 				TRACE("[DEMO_BOOT] Button pressed.\n");
+#ifdef __CC_ARM
+				TRACE("[DEMO_BOOT] Temporary address generated: %02u.\n", rndAddr.sfid);
+#else
 				TRACE("[DEMO_BOOT] Temporary address generated: %02bu.\n", rndAddr.sfid);
-
+#endif
 				EZMacPRO_Wake_Up();							// Wake up from Sleep mode
 				WAIT_FLAG_TRUE(fEZMacPRO_StateIdleEntered);	// Wait until device goes to Idle
 				fEZMacPRO_StateWakeUpEntered = 0;			// Clear State transition flags
@@ -269,8 +272,8 @@ void SlaveNodeAssociate(void)
 
 		case DEMO_ASSOC_RESP_ACK_TX:
 			// Acknowledge Association response.
-			EZMacPRO_Reg_Write(TCR, (0x70|LBT_SWITCH));	// LBT enabled/disabled, Output power: +20 dBm, ACK disable, AFC disable
-			EZMacPRO_Reg_Write(DID, masterAddr.sfid);	// Set DID = Master node
+			EZMacPRO_Reg_Write(TCR, (0x70 | LBT_SWITCH));	// LBT enabled/disabled, Output power: +20 dBm, ACK disable, AFC disable
+			EZMacPRO_Reg_Write(DID, masterAddr.sfid);		// Set DID = Master node
 		
 			// Assemble Association Response acknowledgement frame.
 			rfPayload.frameUnion.assocRespAck.type = FRAME_ASSOC_RESP_ACK;
@@ -289,7 +292,11 @@ void SlaveNodeAssociate(void)
 		
 #ifdef TRACE_ENABLED
 			EZMacPRO_Reg_Read(SFID, &rndAddr.sfid);		// Temporary reuse of rndAddr variable.
+#ifdef __CC_ARM
+			TRACE("[DEMO_ASSOC] Associated. Slave address: %02u.\n", rndAddr.sfid);
+#else
 			TRACE("[DEMO_ASSOC] Associated. Slave address: %02bu.\n", rndAddr.sfid);
+#endif
 #endif
 
 			// Start waiting for Status Update requests
@@ -357,7 +364,7 @@ void SlaveNodeStatusUpdate(void)
 			EZMacPRO_Idle();
 			// Wait until device goes to Idle.
 			WAIT_FLAG_TRUE(fEZMacPRO_StateIdleEntered);
-			EZMacPRO_Reg_Write(TCR, (0x70|LBT_SWITCH));	 // LBT enabled/disabled, Output power: +20 dBm, ACK disable, AFC disable
+			EZMacPRO_Reg_Write(TCR, (0x70 | LBT_SWITCH));	 // LBT enabled/disabled, Output power: +20 dBm, ACK disable, AFC disable
 			EZMacPRO_Reg_Write(DID, masterAddr.sfid);		// Set DID = Master node
 			// Assemble Status Update Response.
 			rfPayload.frameUnion.statusUpdateResp.type = FRAME_SU_RESP;
@@ -385,7 +392,11 @@ void SlaveNodeStatusUpdate(void)
 			LED1_OFF();		// LED1 indicates the radio is OFF.
 #ifdef TRACE_ENABLED
 			EZMacPRO_Reg_Read(SFID, &rndAddr.sfid);	// Temporary reuse of rndAddr variable.
+#ifdef __CC_ARM
+			TRACE("[DEMO_SLEEP] Slave[%02u] went to sleep.\n\n\n", rndAddr.sfid);
+#else
 			TRACE("[DEMO_SLEEP] Slave[%02bu] went to sleep.\n\n\n", rndAddr.sfid);
+#endif
 #endif
 			// Go to Sleep state.
 			DEMO_SR = DEMO_SLEEP;
@@ -413,10 +424,14 @@ void SlaveNodeSleep(void)
 				fEZMacPRO_LFTimerExpired = 0;
 
 				LED1_ON();									// LED1 indicates the radio is ON
-			#ifdef TRACE_ENABLED
+#ifdef TRACE_ENABLED
 				EZMacPRO_Reg_Read(SFID, &rndAddr.sfid);		// Temporary reuse of rndAddr variable
+#ifdef __CC_ARM
+				TRACE("[DEMO_ASSOC] Slave[%02u] woke up.\n", rndAddr.sfid);
+#else
 				TRACE("[DEMO_ASSOC] Slave[%02bu] woke up.\n", rndAddr.sfid);
-			#endif
+#endif
+#endif
 				DEMO_SR = DEMO_SU_REQ_RX;					// Go ahead and start waiting for Status Update request.
 				break;
 			}
