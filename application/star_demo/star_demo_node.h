@@ -13,24 +13,6 @@
 #ifndef _STAR_DEMO_NODE_H_
 #define _STAR_DEMO_NODE_H_
 
-#define WAIT_FLAG_TRUE(f)	\
-	while (!f);				\
-	f = 0
-
-#ifdef TRACE_ENABLED
-	#define TRACE(...)			printf(__VA_ARGS__)
-	#define TRACE_SLAVE_INFO()	PrintSlaveInfo()
-#else
-	#define TRACE(...)
-	#define TRACE_SLAVE_INFO()
-#endif
-
-#ifdef SDBC
-	#define PERFORM_MENU(m)		PerformMenu(m)
-#else
-	#define PERFORM_MENU(m)
-#endif
-
 /* ======================================= *
  *			D E F I N I T I O N S			*
  * ======================================= */

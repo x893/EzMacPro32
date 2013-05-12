@@ -183,4 +183,11 @@ pip-log.txt
 *Log.txt
 *Settings.ini
 *.out
+*.o
+*.iex
 [Bb]uild/
+application/p2p_demo/MDK-ARM/fwd_node/
+application/p2p_demo/MDK-ARM/rx_node/
+application/p2p_demo/MDK-ARM/tx_node/
+application/star_demo/MDK-ARM/master/
+application/star_demo/MDK-ARM/slave/

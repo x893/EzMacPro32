@@ -60,8 +60,10 @@
 #define LED2_ON()			pinHigh ( LED2_PIN )
 #define LED1_INIT()			pinMode ( LED1_PIN, MODE_PushPull_2M)
 #define LED2_INIT()			pinMode ( LED2_PIN, MODE_PushPull_2M )
+#define LED1_READ()			(PIN_PORT(LED1_PIN)->ODR & PIN_MASK(LED1_PIN))
 #define LED2_READ()			(PIN_PORT(LED2_PIN)->ODR & PIN_MASK(LED2_PIN))
 #define LED2_SET(s)			if (s) LED2_ON(); else LED2_OFF()
+#define LED1_TOGGLE()		if (LED1_READ()) LED1_OFF(); else LED1_ON()
 
 /*!
  * Interrupt macros.

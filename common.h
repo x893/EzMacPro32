@@ -1,3 +1,6 @@
+#ifndef _COMMON_H_
+#define _COMMON_H_
+
 /*!
  * Memory qualifiers.
  */
@@ -26,6 +29,7 @@
  * Software Development Board.
  */
 #ifdef SDBC
+#error SDBC
 	#define MCU_F930
 	#define SOFTWARE_DEVELOPMENT_BOARD
 	#define SPI_ENABLED
@@ -87,3 +91,22 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#define WAIT_FLAG_TRUE(f)	\
+	while (!f);				\
+	f = 0
+
+#ifdef TRACE_ENABLED
+	#define TRACE(...)			printf(__VA_ARGS__)
+	#define TRACE_SLAVE_INFO()	PrintSlaveInfo()
+#else
+	#define TRACE(...)
+	#define TRACE_SLAVE_INFO()
+#endif
+#ifdef SDBC
+	#define PERFORM_MENU(m)		PerformMenu(m)
+#else
+	#define PERFORM_MENU(m)
+#endif
+
+#endif
